@@ -13,6 +13,8 @@ Develop a Server Side Application to fetch Crypto Transactions of a user.
   1. GET/fetchDetails/:address - Here we are giving user address as path parameter, and fetching user's transactions for that address.
 
 OUTPUT - 
+
+
 {
   "status": true,
   "msg": {
@@ -76,6 +78,8 @@ OUTPUT -
   2. GET/getBalance/:address - Passing user address as path parameter, and getting their current balance and current price of ether as output.
 
   OUTPUT - 
+
+
 {
   "status": true,
   "data": {
