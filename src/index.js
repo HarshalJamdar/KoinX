@@ -1,13 +1,10 @@
 const express = require("express");
-//const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const route = require("./routes/route")
 const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
 
-
-//app.use(bodyParser.json());
 
 mongoose.connect("mongodb+srv://HarshalJamdar:810Umakant@cluster0.wz2ii.mongodb.net/KoinX", {
     useNewUrlParser: true 
@@ -17,6 +14,6 @@ mongoose.connect("mongodb+srv://HarshalJamdar:810Umakant@cluster0.wz2ii.mongodb.
 
 app.use('/',route);
 
-app.listen(5000,()=>{
-    console.log("Express app runing on the port 5000")
+app.listen(process.env.PORT || 5000, function () {
+    console.log('Express app running on port ' + (process.env.PORT || 5000))
 });
