@@ -12,7 +12,7 @@ const getEther = async function (){
         url: `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=inr`
     }
     let result1 = await axios(options1);
-    let data1 = await etherModel.create({ethereum : result1.data});
+    let data1 = await etherModel.create({ ethereum : result1.data });
     console.log( data1);
     return data1
 }catch(err){
@@ -41,11 +41,11 @@ const getTransaction = async function(req,res){
         if(user){
             //--if user address already exist, updating document
             let details = await transactionModel.findOneAndUpdate({ userAddress : userAdd }, { $set :{ userTransaction : result.data.result } });
-            return res.status(200).send({ msg : details });
+            return res.status(200).send({ status : true, msg : details });
         }else{
             //--if user address not present, creating document
              let details = await transactionModel.create({ userAddress : userAdd ,userTransaction : result.data.result });
-             return res.status(201).send({ msg : details });
+             return res.status(201).send({ status : true, msg : details });
       }
        
     }catch(err){
@@ -77,7 +77,7 @@ const getBalance = async function(req,res){
     //--getting current price of ether
     let price = await getEther();
     let currentEtherPrice = price.ethereum.ethereum.inr 
-    return res.status(200).send({ data : { currentBalance : currBalance, currentEtherPrice : currentEtherPrice } });
+    return res.status(200).send({ status : true, data : { currentBalance : currBalance, currentEtherPrice : currentEtherPrice } });
     }catch(err){
         res.status(500).send({ msg: err.message });
     }
