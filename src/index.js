@@ -1,5 +1,5 @@
 const express = require("express");
-const bodyParser = require("body-parser");
+//const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const route = require("./routes/route")
 const app = express();
@@ -7,7 +7,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 
-app.use(bodyParser.json());
+//app.use(bodyParser.json());
 
 mongoose.connect("mongodb+srv://HarshalJamdar:810Umakant@cluster0.wz2ii.mongodb.net/KoinX", {
     useNewUrlParser: true 

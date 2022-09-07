@@ -1,9 +1,10 @@
 let axios = require("axios");
-const mongoose = require("mongoose");
 const etherModel = require("../models/ether");
 const transactionModel = require("../models/transaction");
 
 
+
+//===Fetching the price of Ethereum every 10 minutes
 const getEther = async function (){
     try{
     let options1 = {
@@ -12,16 +13,19 @@ const getEther = async function (){
     }
     let result1 = await axios(options1);
     let data1 = await etherModel.create({ethereum : result1.data});
-    //console.log( data1);
+    console.log( data1);
     return data1
 }catch(err){
         console.log({ msg: err.message });
 }
 }
 
-setInterval(()=>{getEther()},10*60*1000);
+setInterval(()=>{ getEther() },10*60*1000);
+
+//=========================================================================//
 
 
+//===Fetching the crypto transactions of a user
 const getTransaction = async function(req,res){
     try{
        let userAdd = req.params.address
@@ -35,11 +39,12 @@ const getTransaction = async function(req,res){
         let user = await transactionModel.findOne({userAddress : userAdd});
 
         if(user){
-
-            let details = await transactionModel.findOneAndUpdate({userAddress : userAdd}, {$set :{userTransaction : result.data.result}});
+            //--if user address already exist, updating document
+            let details = await transactionModel.findOneAndUpdate({ userAddress : userAdd }, { $set :{ userTransaction : result.data.result } });
             return res.status(200).send({ msg : details });
         }else{
-             let details = await transactionModel.create({userAddress : userAdd ,userTransaction : result.data.result});
+            //--if user address not present, creating document
+             let details = await transactionModel.create({ userAddress : userAdd ,userTransaction : result.data.result });
              return res.status(201).send({ msg : details });
       }
        
@@ -48,13 +53,19 @@ const getTransaction = async function(req,res){
     }
 }
 
+//=========================================================================//
 
+//===Getting current balance and current price of ether
 const getBalance = async function(req,res){
     try{
         let userAdd = req.params.address;
         let currBalance =0;
         let data = await transactionModel.findOne({ userAddress : userAdd });
+    
+    //--if user address not present
+    if(!data) return res.status(404).send({ status: false, message: "User address not found" });
 
+    //--if user address present, calculating user balance
     for(let i=0;i<data.userTransaction.length;i++){
         if(data.userTransaction[i].from === userAdd){
             currBalance += data.userTransaction[i].value;
@@ -63,14 +74,17 @@ const getBalance = async function(req,res){
         }
     }
 
-    let price = getEther();
-    let currentEatherPrice = price.ethereum.ethereum.inr
-    return res.status(200).send({ data : { currentBalance : currBalance, currentEatherPrice : currentEatherPrice } });
+    //--getting current price of ether
+    let price = await getEther();
+    let currentEtherPrice = price.ethereum.ethereum.inr 
+    return res.status(200).send({ data : { currentBalance : currBalance, currentEtherPrice : currentEtherPrice } });
     }catch(err){
         res.status(500).send({ msg: err.message });
     }
 }
 
-
+//=========================================================================//
 
 module.exports = { getTransaction, getBalance }
+
+//=========================================================================//
